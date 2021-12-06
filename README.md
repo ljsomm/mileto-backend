@@ -9,7 +9,7 @@ Este repositório armazena o código referente a API (Back-End) o projeto em des
     <li>Docker instalado</li>
 </ul>
 
-## Como rodar manualmente?
+## Como rodar (manualmente)?
 
 <ol>
     <li>Executar no terminal, o comando: <code>docker run --name mysql-serv -e MYSQL_ROOT_PASSWORD=mileto123 -p 3306:3306 -d mysql:5.6</code></li>
