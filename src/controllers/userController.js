@@ -22,16 +22,18 @@ module.exports = {
             res.json(await User.findByPk(user.id, { include: ['Images', 'Genres'] }));
         }
         catch(err){
-            switch(err.name){
-                case 'SequelizeValidationError':
-                    return res.status(406).json({
-                        err: 'A requisição não contém todos os dados necessários'
-                    });
-                case 'SequelizeUniqueConstraintError':
-                    return res.status(406).json({
-                        err: 'E-mail já cadastrado'
-                    });
-            }
+            fs.unlink(req.file.path, () => {
+                switch(err.name){
+                    case 'SequelizeValidationError':
+                        return res.status(406).json({
+                            err: 'A requisição não contém todos os dados necessários'
+                        });
+                    case 'SequelizeUniqueConstraintError':
+                        return res.status(406).json({
+                            err: 'E-mail já cadastrado'
+                        });
+                }
+            });
         }
     },
     update: async (req, res) => {
@@ -47,33 +49,63 @@ module.exports = {
         gender.abbreviation = abbreviation;
         gender.customName = customName;
         gender.treatment = treatment;
-        if(req.file){
-            if(image.path !== 'public/default-profile.png'){
-                fs.unlink(image.path, async () => {
+        try{
+            await user.save();
+            if(req.file){
+                if(image.path !== 'public/default-profile.png'){
+                    fs.unlink(image.path, async () => {
+                        image.path = req.file.path;
+                        await image.save();
+                        await gender.save();
+                        res.json(await User.findByPk(id, {include: ['Images', 'Genres']}));
+                    });
+                }
+                else{
                     image.path = req.file.path;
                     await image.save();
+                    await gender.save();
+                    res.json(await User.findByPk(id, {include: ['Images', 'Genres']}));
+                }
+            }
+            else{
+                fs.unlink(image.path, async () => {
+                    image.path = 'public/default-profile.png';
                     await user.save();
+                    await image.save();
                     await gender.save();
                     res.json(await User.findByPk(id, {include: ['Images', 'Genres']}));
                 });
+            } 
+        }
+        catch(err){
+            if(req.file){
+                fs.unlink(req.file.path, () => {
+                    switch(err.name){
+                        case 'SequelizeValidationError':
+                            return res.status(406).json({
+                                err: 'A requisição não contém todos os dados necessários'
+                            });
+                        case 'SequelizeUniqueConstraintError':
+                            return res.status(406).json({
+                                err: 'E-mail já cadastrado'
+                            });
+                    }
+                })
             }
             else{
-                image.path = req.file.path;
-                await image.save();
-                await user.save();
-                await gender.save();
-                res.json(await User.findByPk(id, {include: ['Images', 'Genres']}));
+                switch(err.name){
+                    case 'SequelizeValidationError':
+                        return res.status(406).json({
+                            err: 'A requisição não contém todos os dados necessários'
+                        });
+                    case 'SequelizeUniqueConstraintError':
+                        return res.status(406).json({
+                            err: 'E-mail já cadastrado'
+                        });
+                }
             }
         }
-        else{
-            fs.unlink(image.path, async () => {
-                image.path = 'public/default-profile.png';
-                await image.save();
-                await user.save();
-                await gender.save();
-                res.json(await User.findByPk(id, {include: ['Images', 'Genres']}));
-            });
-        } 
+
     },
     delete: async (req, res) => {
         const { id } = req.headers;
@@ -89,9 +121,11 @@ module.exports = {
                 res.json(await user.destroy()); 
             })
         }
-        await image.destroy();
-        await gender.destroy();
-        res.json(await user.destroy()); 
+        else{
+            await image.destroy();
+            await gender.destroy();
+            res.json(await user.destroy()); 
+        }
     },
     auth: async (req, res) => {
         const { email, password } = req.body;
