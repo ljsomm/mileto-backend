@@ -1,6 +1,6 @@
 # API Projeto Mileto
 
-Este repositório armazena o código referente a API (Back-End) o projeto em desenvolvimento Mileto.
+Este repositório armazena o código referente a API (Back-End) o projeto em desenvolvimento Mileto. Caso tenha interesse em testar, siga os passos abaixo:
 
 ## Requisitos para funcionamento
 
