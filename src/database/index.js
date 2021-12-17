@@ -1,0 +1,13 @@
+const Sequelize = require('sequelize');
+const dbconfig = require('../config/database');
+const connection = new Sequelize(dbconfig);
+const User = require('../models/User');
+const Image = require('../models/Image');
+const Gender = require('../models/Gender');
+User.init(connection);
+Image.init(connection);
+Gender.init(connection);
+User.associate(connection.models);
+Image.associate(connection.models);
+Gender.associate(connection.models);
+module.exports = connection;
