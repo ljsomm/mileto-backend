@@ -1,9 +1,9 @@
 module.exports = {
     dialect: 'mysql',
-    host: 'localhost',
+    host: 'host.docker.internal',
     database: 'db_mileto',
     username: 'root',
-    password: 'mileto123',
+    password: '@mileto123',
     define: {
         timestamps: false
     }

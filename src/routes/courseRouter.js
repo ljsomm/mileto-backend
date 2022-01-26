@@ -1,0 +1,11 @@
+const multerConfig = require('../config/multer');
+const multer = require('multer')(multerConfig.course);
+const courseController = require('../controllers/courseController');
+const userMiddlewares = require('../middlewares/userMiddlewares');
+const router = require('express').Router();
+router.get('/courses', courseController.index);
+router.post('/course', userMiddlewares.authorization, multer.single('course-picture'), courseController.store);
+router.post('/course/:id', userMiddlewares.authorization, courseController.subscribe);
+router.put('/course/:id', userMiddlewares.authorization, multer.single('course-picture'), courseController.update);
+router.delete('/course/:id', userMiddlewares.authorization, courseController.delete);
+module.exports = router;

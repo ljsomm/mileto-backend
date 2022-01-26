@@ -45,6 +45,11 @@ class User extends Model{
             foreignKey: 'userId',
             as: 'Genres'
         });
+        this.belongsToMany(models.Course, {
+            through: 'UserCourse',
+            foreignKey: 'userId',
+            as: 'Courses'
+        });
     }
 }
 
