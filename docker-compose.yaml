@@ -1,0 +1,24 @@
+version: '3.9'
+services:
+
+  app:
+    depends_on:
+      - db
+    image: img-mileto2.2
+    container_name: con-mileto
+    build: .
+    environment:
+      - PORT=3030
+      - SECRET=mileto16
+      - USER_UPLOAD_PATH=./tmp/user-pictures
+      - COURSE_UPLOAD_PATH=./tmp/course-thumbnails
+    ports:
+      - 3030:3030
+
+  db:
+    image: mysql:5.7
+    container_name: mysqlserv
+    environment:
+      - MYSQL_ROOT_PASSWORD=@mileto123
+    ports: 
+      - 3306:3306
