@@ -3,10 +3,17 @@ const User = require('../models/User');
 const UserCourse = require('../models/UserCourse');
 const Thumbnail = require('../models/Thumbnail');
 const fs = require('fs');
+const Section = require("../models/Section");
+const Video = require("../models/Video");
+const UserVideo = require("../models/UserVideo");
 
 module.exports = {
     index: async (req, res) => {
         res.json(await Course.findAll({include: ['Images', 'Users']}));
+    },
+    show: async (req, res) => {
+        const { id } = req.params;
+        res.json(await Course.findByPk(id, { include: 'Sections' }));
     },
     store: async (req, res) => {
         const { id } = req.headers;
@@ -66,6 +73,25 @@ module.exports = {
             const thumbnail = await Thumbnail.findOne({where: { courseId }});
             fs.unlinkSync(thumbnail.path);
             await thumbnail.destroy();
+            const sections = await Section.findAll({ where: { courseId }, include: 'Videos' });
+            if(sections.length != 0){
+                for(let section of sections){
+                    if(section.Videos.length != 0){
+                        for(let item of section.Videos){
+                            const video = await Video.findByPk(item.id, { include: 'Users' });
+                            const userVideo = await UserVideo.findAll({ where: { videoId: video.id } });
+                            if(userVideo.length != 0){
+                                for(let videoUser of userVideo){
+                                    await video.removeUser(await User.findByPk(videoUser.userId));
+                                }
+                            }
+                            fs.unlinkSync(video.path);
+                            await video.destroy();
+                        }
+                    }
+                    await section.destroy();
+                }
+            }
             const userCourse = await UserCourse.findAll({ where: { courseId } });
             for(let item of userCourse){
                 await course.removeUser(await User.findByPk(item.userId));
