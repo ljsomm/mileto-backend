@@ -8,7 +8,7 @@ module.exports = () => {
     app.use(express.urlencoded({extended: true}));
     app.use(cors());
     app.use(express.static('public'));
-    app.use(express.static('tmp/uploads'));
+    app.use(express.static('tmp'));
     require('./database/index');
     require('./routes')(app);
     app.set('port', process.env.PORT);
