@@ -21,6 +21,8 @@ Este repositório armazena o código referente a API (Back-End) o projeto em des
 
 ## Como rodar (automaticamente com docker-compose)?
 
+<b>OBS: Os containers recebem IP local váriavel de acordo com a sua máquina, para isso o verifique e onde há IP's (como para o banco de dados) e coloque o seu. Exemplo de IP local: 192.168.0.11 no arquivo ./src/config/database.js</b>
+
 <ol>
     <li>Executar no terminal, o comando: <code>docker-compose up -d db</code></li>
     <li>Em seguida, o comando: <code>docker-compose up -d app</code></li>
