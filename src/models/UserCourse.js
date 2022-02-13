@@ -22,5 +22,4 @@ class UserCourse extends Model{
     }
 }
 
-
 module.exports = UserCourse;

@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const Image = require('../models/Image');
 const Gender = require('../models/Gender');
+const UserVideo = require('../models/UserVideo');
+const UserCourse = require('../models/UserCourse');
 
 module.exports = {
     index: async (req, res) => {
@@ -114,6 +116,18 @@ module.exports = {
         });
         const image = await Image.findByPk(user.Images[0].id);
         const gender = await Gender.findByPk(user.Genres[0].id);
+        const userCourse = await UserCourse.findAll({ where: { userId: user.id } });
+        if(userCourse.length != 0){
+            for(let associations of userCourse){
+                await associations.destroy();
+            }
+        }
+        const userVideo = await UserVideo.findAll({ where: { userId: user.id } });
+        if(userVideo.length != 0){
+            for(let associations of userVideo){
+                await associations.destroy();
+            }
+        }
         if(image.path !== 'public/default-profile.png'){
             fs.unlink(image.path, async () => {
                 await image.destroy();

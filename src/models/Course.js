@@ -23,7 +23,6 @@ class Course extends Model{
         }, {sequelize, tableName: 'tb_curso'});
     }
 
-
     static associate(models){
         this.belongsToMany(models.User, {
             through: 'UserCourse',
@@ -32,6 +31,10 @@ class Course extends Model{
         });
         this.hasMany(models.Thumbnail, {
             as: 'Images',
+            foreignKey: 'courseId'
+        });
+        this.hasMany(models.Section, {
+            as: 'Sections',
             foreignKey: 'courseId'
         });
     }

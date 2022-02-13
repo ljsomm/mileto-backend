@@ -12,6 +12,7 @@ services:
       - SECRET=mileto16
       - USER_UPLOAD_PATH=./tmp/user-pictures
       - COURSE_UPLOAD_PATH=./tmp/course-thumbnails
+      - VIDEO_UPLOAD_PATH=./tmp/course-videos
     ports:
       - 3030:3030
 
