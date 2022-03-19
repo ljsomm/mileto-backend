@@ -1,6 +1,6 @@
 {
   "name": "mileto-backend",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Backend do projeto de TCC, Mileto",
   "main": "src/server.js",
   "scripts": {
