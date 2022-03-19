@@ -24,18 +24,17 @@ module.exports = {
             res.json(await User.findByPk(user.id, { include: ['Images', 'Genres'] }));
         }
         catch(err){
-            fs.unlink(req.file.path, () => {
-                switch(err.name){
-                    case 'SequelizeValidationError':
-                        return res.status(406).json({
-                            err: 'A requisição não contém todos os dados necessários'
-                        });
-                    case 'SequelizeUniqueConstraintError':
-                        return res.status(406).json({
-                            err: 'E-mail já cadastrado'
-                        });
-                }
-            });
+            if(req.file) fs.unlinkSync(req.file.path);
+            switch(err.name){
+                case 'SequelizeValidationError':
+                    return res.status(406).json({
+                        err: 'A requisição não contém todos os dados necessários'
+                    });
+                case 'SequelizeUniqueConstraintError':
+                    return res.status(406).json({
+                        err: 'E-mail já cadastrado'
+                    });
+            }
         }
     },
     update: async (req, res) => {
