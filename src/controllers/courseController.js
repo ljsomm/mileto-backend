@@ -13,7 +13,7 @@ module.exports = {
     },
     show: async (req, res) => {
         const { id } = req.params;
-        res.json(await Course.findByPk(id, { include: 'Sections' }));
+        res.json(await Course.findByPk(id, { include: ['Sections', 'Images'] }));
     },
     store: async (req, res) => {
         const { id } = req.headers;
