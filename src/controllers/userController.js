@@ -156,5 +156,10 @@ module.exports = {
         catch(err){
             res.status(500).json({ err: 'Algum erro inesperado aconteceu' });
         }
+    },
+    showCourses: async (req, res) => {
+        const { id } = req.headers;
+        const user = await User.findByPk(id, { include: "Courses" });
+        res.json(user);
     }
 }

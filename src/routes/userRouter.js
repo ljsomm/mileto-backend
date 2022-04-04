@@ -4,6 +4,7 @@ const { user } = require('../config/multer');
 const multer = require('multer')(user);
 const router = require('express').Router();
 router.get('/users', userController.index);
+router.get('/user/courses', userMiddlewares.authorization, userController.showCourses);
 router.get('/user', userMiddlewares.authorization, userController.show);
 router.post('/user', multer.single('user-photo'), userController.create);
 router.post('/user/auth', userController.auth);
