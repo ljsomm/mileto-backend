@@ -110,5 +110,16 @@ module.exports = {
         else{
             res.status(400).json({ err: "Vídeo não encontrado" });
         }
+    },
+    showAssociation: async (req, res) => {
+        const { courseId } = req.params;
+        const { id } = req.headers;
+        try{
+            const userVideo = await Video.findOne({ include: [{model: User, as:'Users', where: { id: id }, through:{ where: { lastWatched: true } }},{model: Section, as: 'Sections', where: { courseId }}] });
+            res.json(userVideo);
+        }
+        catch(err){
+            res.status(500).json({ err: "Ocorreu um erro inesperado" });
+        }
     }
 }
