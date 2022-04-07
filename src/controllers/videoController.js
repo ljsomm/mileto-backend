@@ -4,6 +4,7 @@ const User = require("../models/User");
 const UserCourse = require('../models/UserCourse');
 const fs = require('fs');
 const UserVideo = require("../models/UserVideo");
+const { findByPk } = require("../models/Section");
 
 module.exports = {
     index: async (req, res) => {
@@ -95,13 +96,21 @@ module.exports = {
             const { watchedTime } = req.body;
             const userVideo = await UserVideo.findOne({ where: { userId, lastWatched: true } });
             if(userVideo && userVideo.videoId != videoId){
+                userVideo.watchedTime = watchedTime;
                 userVideo.lastWatched = false;
                 await userVideo.save();
             }
+
             const section = await Section.findByPk(video.sectionId);
             const userCourse = await UserCourse.findOne({ where: { userId, courseId: section.courseId } });
+
             if(userCourse){
-                res.json(await video.addUser(user, { through: { watchedTime, lastWatched: true } }));
+                const userVideo = await UserVideo.findOne({ where: { userId, videoId } });
+                if(userVideo)
+                    res.json(await video.addUser(user, { through: { lastWatched: true } }));
+                else
+                    res.json(await video.addUser(user, { through: { lastWatched: true, watchedTime: 0 } }));
+
             }
             else{
                 res.status(401).json({ err: "Usuário não permitido a realizar essa ação" });
@@ -116,10 +125,41 @@ module.exports = {
         const { id } = req.headers;
         try{
             const userVideo = await Video.findOne({ include: [{model: User, as:'Users', where: { id: id }, through:{ where: { lastWatched: true } }},{model: Section, as: 'Sections', where: { courseId }}] });
-            res.json(userVideo);
+            if(userVideo)
+                res.json(userVideo);
+            else{
+                const video = await Video.findOne({ include: { model: Section, as: 'Sections', where: { courseId } } });
+                const user = await User.findByPk(id);
+
+                await video.addUser(user, { through: { lastWatched: true, watchedTime: 0 } })
+                const userVideo = await Video.findOne({ include: [{model: User, as:'Users', where: { id: id }, through:{ where: { lastWatched: true } }},{model: Section, as: 'Sections', where: { courseId }}] });
+
+                res.json(userVideo);
+            }
+
         }
         catch(err){
             res.status(500).json({ err: "Ocorreu um erro inesperado" });
         }
+    },
+    showUserVideo: async (req, res) => {
+        const videoId = req.params.id;
+        const userId = req.headers.id;
+        const userVideo = await UserVideo.findOne({ where: { userId, videoId } });
+        res.json(userVideo);
+    },
+    setCurrentVideoTime: async (req, res) => {
+        const { watchedTime } = req.body;
+        const videoId = req.params.id;
+        const userId = req.headers.id;
+        try{
+            const user = await User.findByPk(userId);
+            const video =  await Video.findByPk(videoId);
+            res.json(await video.addUser(user, { through: { watchedTime } }));
+        }
+        catch(e){
+            console.log(e);
+        }
+        
     }
 }
