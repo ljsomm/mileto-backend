@@ -3,6 +3,7 @@ const Video = require("../models/Video");
 const User = require("../models/User");
 const UserCourse = require('../models/UserCourse');
 const fs = require('fs');
+const Seciton = require('../models/Section');
 const UserVideo = require("../models/UserVideo");
 const { findByPk } = require("../models/Section");
 
@@ -136,11 +137,17 @@ module.exports = {
 
                 res.json(userVideo);
             }
-
         }
         catch(err){
+            console.log(err);
             res.status(500).json({ err: "Ocorreu um erro inesperado" });
         }
+    },
+    showLastWatched: async (req, res) => {
+        const courseId = req.params.courseId;
+        const userId = req.headers.id;
+        console.log(req.headers.id);
+        res.json(await User.findByPk(userId, { include: { as: 'Videos', model: Video, include: {as: 'Sections', model: Section, where: { courseId } }, through: { where: { lastWatched: true} } }  }));
     },
     showUserVideo: async (req, res) => {
         const videoId = req.params.id;

@@ -5,6 +5,8 @@ const Image = require('../models/Image');
 const Gender = require('../models/Gender');
 const UserVideo = require('../models/UserVideo');
 const UserCourse = require('../models/UserCourse');
+const Course = require('../models/Course');
+const Video = require('../models/Video');
 
 module.exports = {
     index: async (req, res) => {
@@ -159,7 +161,7 @@ module.exports = {
     },
     showCourses: async (req, res) => {
         const { id } = req.headers;
-        const user = await User.findByPk(id, { include: "Courses" });
+        const user = await User.findByPk(id, { include: [{as: "Courses", model: Course, include: 'Images'}, { as: 'Videos', model: Video, include: 'Sections', through: { where: { lastWatched: true } }  }] });
         res.json(user);
     }
 }
