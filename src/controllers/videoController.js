@@ -139,14 +139,12 @@ module.exports = {
             }
         }
         catch(err){
-            console.log(err);
             res.status(500).json({ err: "Ocorreu um erro inesperado" });
         }
     },
     showLastWatched: async (req, res) => {
         const courseId = req.params.courseId;
         const userId = req.headers.id;
-        console.log(req.headers.id);
         res.json(await User.findByPk(userId, { include: { as: 'Videos', model: Video, include: {as: 'Sections', model: Section, where: { courseId } }, through: { where: { lastWatched: true} } }  }));
     },
     showUserVideo: async (req, res) => {
