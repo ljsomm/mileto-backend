@@ -4,14 +4,17 @@
   "description": "Backend do projeto de TCC, Mileto",
   "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "build": "npx webpack",
+    "postinstall": "npm run build",
+    "dev": "npx webpack -w",
+    "start": "node dist/bundle.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -20,6 +23,7 @@
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.4",
     "mysql2": "^2.3.3",
+    "nodemon-webpack-plugin": "^4.7.1",
     "sequelize": "^6.12.0-beta.1",
     "sequelize-cli": "^6.3.0"
   }

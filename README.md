@@ -35,6 +35,7 @@ Este repositório armazena o código referente a API (Back-End) o projeto em des
     <li>Node.js</li>
     <li>Express</li>
     <li>Sequelize ORM</li>
+    <li>Webpack</li>
     <li>Docker</li>
     <li>Docker-Compose</li>
 </ul>

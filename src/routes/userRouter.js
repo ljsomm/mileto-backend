@@ -9,5 +9,6 @@ router.get('/user', userMiddlewares.authorization, userController.show);
 router.post('/user', multer.single('user-photo'), userController.create);
 router.post('/user/auth', userController.auth);
 router.put('/user', userMiddlewares.authorization, multer.single('user-photo'), userController.update);
+router.put('/user/password', userMiddlewares.authorization, userController.updatePassword);
 router.delete('/user', userMiddlewares.authorization, userController.delete);
 module.exports = router;

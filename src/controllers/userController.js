@@ -41,74 +41,29 @@ module.exports = {
     },
     update: async (req, res) => {
         const { id } = req.headers;
-        const { name, birthDate, email, password, abbreviation, customName = null, treatment = null } = req.body;
-        const user = await User.findByPk(id, {include:['Images', 'Genres']});
+        const { name, birthDate, email, removeImage = null } = req.body;
+        const user = await User.findByPk(id, {include:'Images'});
         const image = await Image.findByPk(user.Images[0].id);
-        const gender = await Gender.findByPk(user.Genres[0].id);
         user.name = name;
         user.birthDate = birthDate;
         user.email = email;
-        user.password = password;
-        gender.abbreviation = abbreviation;
-        gender.customName = customName;
-        gender.treatment = treatment;
         try{
             await user.save();
             if(req.file){
-                if(image.path !== 'public/default-profile.png'){
-                    fs.unlink(image.path, async () => {
-                        image.path = req.file.path;
-                        await image.save();
-                        await gender.save();
-                        res.json(await User.findByPk(id, {include: ['Images', 'Genres']}));
-                    });
-                }
-                else{
-                    image.path = req.file.path;
-                    await image.save();
-                    await gender.save();
-                    res.json(await User.findByPk(id, {include: ['Images', 'Genres']}));
-                }
+                image.path !== 'public/default-profile.png' && fs.unlinkSync(image.path);
+                image.path = req.file.path;
+                await image.save();
             }
-            else{
-                fs.unlink(image.path, async () => {
-                    image.path = 'public/default-profile.png';
-                    await user.save();
-                    await image.save();
-                    await gender.save();
-                    res.json(await User.findByPk(id, {include: ['Images', 'Genres']}));
-                });
-            } 
+            if(removeImage){
+                image.path != 'public/default-profile.png' && fs.unlinkSync(image.path);
+                image.path = 'public/default-profile.png';
+                await image.save();
+            }
+            res.json(await User.findByPk(id, { include: 'Images' }));
         }
         catch(err){
-            if(req.file){
-                fs.unlink(req.file.path, () => {
-                    switch(err.name){
-                        case 'SequelizeValidationError':
-                            return res.status(406).json({
-                                err: 'A requisição não contém todos os dados necessários'
-                            });
-                        case 'SequelizeUniqueConstraintError':
-                            return res.status(406).json({
-                                err: 'E-mail já cadastrado'
-                            });
-                    }
-                })
-            }
-            else{
-                switch(err.name){
-                    case 'SequelizeValidationError':
-                        return res.status(406).json({
-                            err: 'A requisição não contém todos os dados necessários'
-                        });
-                    case 'SequelizeUniqueConstraintError':
-                        return res.status(406).json({
-                            err: 'E-mail já cadastrado'
-                        });
-                }
-            }
+            console.log(err);
         }
-
     },
     delete: async (req, res) => {
         const { id } = req.headers;
@@ -163,5 +118,17 @@ module.exports = {
         const { id } = req.headers;
         const user = await User.findByPk(id, { include: [{as: "Courses", model: Course, include: 'Images'}, { as: 'Videos', model: Video, include: 'Sections', through: { where: { lastWatched: true } }  }] });
         res.json(user);
+    },
+    updatePassword: async (req, res) => {
+        const { id } = req.headers;
+        const { currentPassword, newPassword } = req.body;
+        const user = await User.findByPk(id);
+        if(user.password === currentPassword){
+            user.password = newPassword;
+            res.json(await user.save());
+        }
+        else{
+            res.status(400).json({ err: "Senha atual incorreta" });
+        }
     }
 }
