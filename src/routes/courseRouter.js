@@ -6,6 +6,7 @@ const router = require('express').Router();
 router.get('/courses', courseController.index);
 router.post('/course', userMiddlewares.authorization, multer.single('course-picture'), courseController.store);
 router.get('/course/:id', courseController.show);
+router.get('/teacher/courses' ,userMiddlewares.authorization, courseController.showTeacher);
 router.post('/course/:id', userMiddlewares.authorization, courseController.subscribe);
 router.put('/course/:id', userMiddlewares.authorization, multer.single('course-picture'), courseController.update);
 router.delete('/course/:id', userMiddlewares.authorization, courseController.delete);

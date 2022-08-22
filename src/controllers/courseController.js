@@ -15,6 +15,25 @@ module.exports = {
         const { id } = req.params;
         res.json(await Course.findByPk(id, { include: ['Sections', 'Images'] }));
     },
+    showTeacher: async (req, res) => {
+        const teacherId = req.headers.id;
+        try{
+            res.status(200).json(await Course.findAll({ include: {
+                required: true,
+                model: User,
+                as: 'Users',
+                through: {
+                    where:{
+                        userId: teacherId,
+                        admin: true
+                    }
+                } 
+            } }));
+        }
+        catch(err){
+            console.error(err);
+        }
+    },
     store: async (req, res) => {
         const { id } = req.headers;
         const { name, description } = req.body;
