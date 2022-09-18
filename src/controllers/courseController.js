@@ -18,7 +18,7 @@ module.exports = {
     showTeacher: async (req, res) => {
         const teacherId = req.headers.id;
         try{
-            res.status(200).json(await Course.findAll({ include: {
+            res.status(200).json(await Course.findAll({ include: [{
                 required: true,
                 model: User,
                 as: 'Users',
@@ -27,8 +27,8 @@ module.exports = {
                         userId: teacherId,
                         admin: true
                     }
-                } 
-            } }));
+                },
+            }, "Images"] }));
         }
         catch(err){
             console.error(err);
