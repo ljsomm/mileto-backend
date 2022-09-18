@@ -6,8 +6,8 @@
   "scripts": {
     "build": "npx webpack",
     "postinstall": "npm run build",
-    "dev": "npx webpack -w",
-    "start": "node dist/bundle.js"
+    "dev": "sequelize db:create && sequelize db:migrate && npx webpack -w",
+    "start": "sequelize db:create && sequelize db:migrate && node dist/bundle.js"
   },
   "author": "",
   "license": "ISC",
