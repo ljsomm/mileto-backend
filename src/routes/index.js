@@ -8,4 +8,5 @@ module.exports = app => {
     app.use(courseRouter);
     app.use(sectionRouter);
     app.use(videoRouter);
+  
 }
