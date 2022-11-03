@@ -120,5 +120,18 @@ module.exports = {
         else{
             res.status(403).json({ err: "Curso não encontrado ou Usuário inexistente/não autorizado" });
         }
-     } 
+     } ,
+
+
+     showUserCourse: async (req, res) => {
+        res.json(await UserCourse.findOne({
+            where: {
+                userId:req.headers.id,
+                courseId:req.params.id   
+            }
+        }));},
+
+
+
+
 }
