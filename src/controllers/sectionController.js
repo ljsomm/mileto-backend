@@ -22,7 +22,7 @@ module.exports = {
             const course = await Course.findByPk(courseId);
             const { name } = req.body;
             const section = await course.createSection({ name });
-            res.json(await Section.findByPk(section.id, { include: 'Courses' }));
+            res.json(await Section.findByPk(section.id, { include: ['Courses', 'Videos'] }));
         }
         else{
             res.status(401).json({ err: "Curso não encontrado ou Usuário inexistente/não autorizado" });
