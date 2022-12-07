@@ -14,7 +14,7 @@ module.exports = {
     store: async (req, res) => {
         if(req.file){
             const sectionId = req.params.id;
-            const { title } = req.body;
+            const { title } = req.headers;
             const section = await Section.findByPk(sectionId);
             if(section){
                 const userId = req.headers.id;
@@ -39,7 +39,7 @@ module.exports = {
         if(req.file){
             const userId = req.headers.id;
             const { id } = req.params;
-            const { title } = req.body;
+            const { title } = req.headers;
             const video = await Video.findByPk(id);
             if(video){
                 const section = await Section.findByPk(video.sectionId, { include: 'Courses' });
